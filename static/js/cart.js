@@ -20,12 +20,14 @@ for (var i = 0; i < updateBtns.length; i++) {
 function updateUserOrder(productId, action){
     console.log('User is logged, sending data...')
 
-    var url = '/update_item/'
-/* create and use the fetch API to sent a post request */
-    fetch(url, {
+    var url = '/update_item'
+    /* create and use the fetch API to sent a post request */
+    fetch(url,
+        {
         method:'POST',
         headers:{
             'Content-Type':'application/json',
+            'X-CSRFToken':csrftoken,
         },
         body:JSON.stringify({'productId':productId, 'action':action}) /* converting and sending our productId and action as a json object */
     })
