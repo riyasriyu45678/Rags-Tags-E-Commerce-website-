@@ -9,11 +9,35 @@ for (var i = 0; i < updateBtns.length; i++) {
         /* checking user status on click */
         console.log('USER:', user)
         if (user === 'AnonymousUser'){
-            console.log('Not logged in')
+            addCookieItem(productId, action)
         }else{
             updateUserOrder(productId, action)/* passing the function updateuserorder so it gets called when the user is logged */
         }
     })
+}
+
+
+function addCookieItem(productId, action){
+    console.log('Not logged in...')
+
+    if(action == 'add'){
+        if(cart[productId] == undefined ){
+            cart[productId] = {'quantity': 1}
+        }else{
+            cart[productId]['quantity']+= 1
+        }
+    }
+    if(action == 'remove'){
+        cart[productId]['quantity'] -= 1
+
+        if(cart[productId]['quantity'] <= 0){
+            console.log('Remove Item')
+            delete cart[productId]
+        }
+    }
+    console.log('Cart:', cart)
+    document.cookie = 'cart=' + JSON.stringify(cart) + ";domain;path=/"
+    location.reload()
 }
 
 /* defining the function with 2 parameters : productId, action  */
