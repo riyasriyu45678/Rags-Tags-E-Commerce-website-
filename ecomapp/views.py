@@ -3,7 +3,7 @@ from .models import *
 from django.http import JsonResponse
 import json
 import datetime
-from .utils import cookieCart, cartData
+from . utils import cookieCart, cartData, guestOrder
 # Create your views here.
 
 def store(request):
@@ -45,7 +45,7 @@ def updateItem(request):
 
     customer = request.user.customer
     product = Product.objects.get(id=productId)
-    order, created = Order.objects.get_or_create(customer=customer, complete=False)
+    order, created = Order.objects.get_or_create(customer = customer, complete = False)
 
     orderItem, created = OrderItem.objects.get_or_create(order=order, product=product)
 
@@ -66,38 +66,11 @@ def processOrder(request):
     data = json.loads(request.body)
     if request.user.is_authenticated:
         customer = request.user.customer
-        order, created = Order.objects.get_or_create(customer = customer, complete = False)
+        order, created= Order.objects.get_or_create(customer = customer, complete = False)
             
 
     else:
-        print('User is not logged in...')
-
-        print('COOKIES:',request.COOKIES)
-        name = data['form']['name']
-        email = data['form']['email']
-
-        cookieData = cookieCart(request)
-        items = cookieData['items']
-
-        customer, created = Customer.objects.get_or_create(
-            email = email,
-        )
-        customer.name = name
-        customer.save()
-
-        order = Order.objects.create(
-            customer = customer,
-            complete = False
-        )
-
-        for item in items:
-            product = Product.objects.get(id=item['product']['id'])
-
-            orderItem = OrderItem.objects. create(
-                product = product,
-                order = order,
-                quantity = item['quantity']
-            )
+        customer, order = guestOrder(request, data)
 
     total = float(data['form']['total'])
     order.transaction_id = transaction_id
@@ -115,5 +88,5 @@ def processOrder(request):
                 zipcode=data['shipping']['zipcode'],
             )
 
-    return JsonResponse('Payment submitted..!', safe = False)
+    return JsonResponse('Payment submitted..!', safe=False)
     
