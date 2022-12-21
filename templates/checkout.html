@@ -66,9 +66,11 @@
         </div>
   </div>
 </div>
-<script src="https://www.paypal.com/sdk/js?client-id=test&currency=USD"></script>
+<script src="https://www.paypal.com/sdk/js?client-id=ASyjoSCunmD4rzLO_3v1YugvEBROVcIpm9e2Y10TJudvrPnLU0EzNDHq-AZbmJnwSNyOTTXWW1veqdmt&currency=USD"></script>
 
 <script>
+
+    var total = '{{order.get_cart_total}}'
     // Render the PayPal button into #paypal-button-container
     paypal.Buttons({
 
@@ -82,7 +84,7 @@
             return actions.order.create({
                 purchase_units: [{
                     amount: {
-                        value: '88.44'
+                        value: parseFloat(total).toFixed(2)
                     }
                 }]
             });
@@ -92,9 +94,7 @@
         onApprove: function(data, actions) {
             return actions.order.capture().then(function(orderData) {
                 // Successful capture! For demo purposes:
-                console.log('Capture result', orderData, JSON.stringify(orderData, null, 2));
-                var transaction = orderData.purchase_units[0].payments.captures[0];
-                alert('Transaction '+ transaction.status + ': ' + transaction.id + '\n\nSee console for all available details');
+                submitFormData()
 
                 // Replace the above to show a success message within this page, e.g.
                 // const element = document.getElementById('paypal-button-container');
